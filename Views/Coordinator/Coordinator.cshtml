@@ -1,0 +1,13 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Programme Coordinator";
+}
+
+<div class="card p-4">
+    <h2>Programme Coordinator Dashboard</h2>
+    <p>Pending claims and verification tools will be shown here.</p>
+
+    <div class="mt-3">
+        <a class="btn btn-outline-primary" asp-controller="Coordinator" asp-action="PendingClaims">View Pending Claims</a>
+    </div>
+</div>

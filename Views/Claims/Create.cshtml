@@ -1,0 +1,82 @@
+﻿@model CMCS_Web.Models.Claim
+@{
+    ViewData["Title"] = "Submit New Claim";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="mb-3">Submit New Claim</h2>
+
+<form asp-action="Create"
+      asp-controller="Claims"
+      method="post"
+      enctype="multipart/form-data"
+      class="card p-3 shadow-sm">
+
+    @Html.AntiForgeryToken()
+
+    <div class="row mb-3">
+        <label class="col-sm-2 col-form-label">Month</label>
+        <div class="col-sm-10">
+            <input asp-for="Month" class="form-control" placeholder="e.g. September 2025" />
+            <span asp-validation-for="Month" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <label class="col-sm-2 col-form-label">Hours Worked</label>
+        <div class="col-sm-10">
+            <input asp-for="HoursWorked" name="HoursWorked" class="form-control" />
+            <span asp-validation-for="HoursWorked" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <label class="col-sm-2 col-form-label">Hourly Rate (R)</label>
+        <div class="col-sm-10">
+            <input asp-for="HourlyRate" name="HourlyRate" class="form-control" />
+            <span asp-validation-for="HourlyRate" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <label class="col-sm-2 col-form-label">Description</label>
+        <div class="col-sm-10">
+            <textarea asp-for="Description" class="form-control"></textarea>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <label class="col-sm-2 col-form-label">Upload Supporting Document</label>
+        <div class="col-sm-10">
+            <input type="file" name="uploadedFile" class="form-control" accept=".pdf,.doc,.docx,.xlsx" />
+            <small class="form-text text-muted">Allowed: .pdf, .doc, .docx, .xlsx — max 6MB</small>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <div id="paymentDisplay" class="fw-bold">Payment: R 0.00</div>
+    </div>
+
+    <div class="text-end">
+        <button type="submit" class="btn btn-primary">Submit Claim</button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        (function () {
+            const hours = document.querySelector('input[name="HoursWorked"]');
+            const rate = document.querySelector('input[name="HourlyRate"]');
+            const display = document.getElementById('paymentDisplay');
+
+            function calc() {
+                const h = parseFloat(hours?.value || 0) || 0;
+                const r = parseFloat(rate?.value || 0) || 0;
+                display.innerText = 'Payment: R ' + (h * r).toFixed(2);
+            }
+
+            hours?.addEventListener('input', calc);
+            rate?.addEventListener('input', calc);
+        })();
+    </script>
+}

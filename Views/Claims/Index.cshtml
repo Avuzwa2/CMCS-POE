@@ -1,0 +1,58 @@
+﻿@model IEnumerable<CMCS_Web.Models.Claim>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "My Claims";
+}
+
+<div class="bg-white p-4 rounded shadow-sm">
+    <h2 class="fw-bold text-center text-dark mb-4">My Claims</h2>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info text-center">You have not submitted any claims yet.</div>
+    }
+    else
+    {
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Month</th>
+                    <th>Hours</th>
+                    <th>Rate (R)</th>
+                    <th>Payment (R)</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Submitted</th>
+                    <th>File</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var claim in Model)
+                {
+                    <tr>
+                        <td>@claim.Month</td>
+                        <td>@claim.HoursWorked</td>
+                        <td>@claim.HourlyRate</td>
+                        <td>@( (claim.HoursWorked * claim.HourlyRate).ToString("0.00") )</td>
+                        <td>@claim.Description</td>
+                        <td>
+                            @{
+                                var cls = claim.Status == "Approved" ? "badge bg-success"
+                                : claim.Status == "Rejected" ? "badge bg-danger"
+                                : "badge bg-warning text-dark";
+                            }
+                            <span class="@cls">@claim.Status</span>
+                        </td>
+                        <td>@(claim.DateSubmitted == default ? "-" : claim.DateSubmitted.ToString("yyyy-MM-dd HH:mm"))</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(claim.UploadedFileName))
+                            {
+                                <a asp-controller="Claims" asp-action="Download" asp-route-fileName="@claim.UploadedFileName">Download</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

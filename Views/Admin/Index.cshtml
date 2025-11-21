@@ -1,0 +1,85 @@
+﻿@model IEnumerable<CMCS_Web.Models.Claim>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Academic Manager Dashboard";
+}
+
+<div class="card p-4 shadow-sm">
+    <h2 class="text-center mb-4">Academic Manager Dashboard</h2>
+
+    <p class="text-muted text-center">
+        Academic Managers can view, approve, or reject any submitted claims.
+    </p>
+
+    <div class="alert alert-warning text-center">
+        (Feature under development – but page is fully functional now)
+    </div>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success mt-3">@TempData["Message"]</div>
+    }
+
+    <hr />
+
+    <h4 class="mb-3">Claims</h4>
+
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Month</th>
+                <th>Hours</th>
+                <th>Rate (R)</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Submitted</th>
+                <th>File</th>
+                <th style="width:180px;">Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var claim in Model)
+            {
+                <tr>
+                    <td>@claim.Month</td>
+                    <td>@claim.HoursWorked</td>
+                    <td>@(claim.HourlyRate)</td>
+                    <td>@claim.Description</td>
+                    <td>
+                        @{
+                            var cls = claim.Status == "Approved" ? "badge bg-success" :
+                            claim.Status == "Rejected" ? "badge bg-danger" :
+                            "badge bg-warning text-dark";
+                        }
+                        <span class="@cls">@claim.Status</span>
+                    </td>
+                    <td>@(claim.DateSubmitted == default(DateTime) ? "-" : claim.DateSubmitted.ToString("yyyy-MM-dd HH:mm"))</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(claim.UploadedFileName))
+                        {
+                            <a asp-controller="Claims" asp-action="Download" asp-route-fileName="@claim.UploadedFileName">Download</a>
+                        }
+                    </td>
+
+                    <td class="text-center">
+                        <!-- Approve (POST) -->
+                        <form asp-controller="Admin" asp-action="Approve" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@claim.Id" />
+                            <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                        </form>
+
+                        <!-- Reject (POST) -->
+                        <form asp-controller="Admin" asp-action="Reject" method="post" class="d-inline ms-1">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@claim.Id" />
+                            <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
